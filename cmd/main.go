@@ -2,10 +2,9 @@ package main
 
 import (
 	"camarinb2096/form_example/internal/app/config/db"
+	"camarinb2096/form_example/internal/app/server"
 	"log"
-	"os"
 
-	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
 
@@ -14,27 +13,13 @@ func main() {
 	if err != nil {
 		log.Println("Failed to load .env file: ", err)
 	}
+
 	config := db.NewConfig()
-	_ = db.NewDb(config)
 
-	r := gin.Default()
+	pgSqlConn := db.NewDb(config)
 
-	log.Println("Gin mode: ", os.Getenv("GIN_MODE"))
+	defer db.CloseDb(pgSqlConn)
 
-	switch os.Getenv("GIN_MODE") {
-	case "release":
-		gin.SetMode(gin.ReleaseMode)
-	case "debug":
-		gin.SetMode(gin.DebugMode)
-	default:
-		gin.SetMode(gin.TestMode)
-	}
-
-	r.POST("/pqrs", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-	r.Run()
-
+	server := server.NewServer()
+	server.Start()
 }

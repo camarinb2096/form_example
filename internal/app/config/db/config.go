@@ -36,5 +36,13 @@ func NewDb(cfg *Config) *gorm.DB {
 	}
 	log.Println("Connected to database:", cfg.Database)
 	return db
+}
 
+func CloseDb(db *gorm.DB) error {
+	sqlDb, err := db.DB()
+	if err != nil {
+		return err
+	}
+	log.Println("Closing database connection")
+	return sqlDb.Close()
 }
