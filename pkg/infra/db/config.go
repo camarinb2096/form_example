@@ -1,6 +1,8 @@
 package db
 
 import (
+	"camarinb2096/form_example/internal/app/complaint"
+	"camarinb2096/form_example/internal/app/customer"
 	"fmt"
 	"log"
 	"os"
@@ -35,6 +37,11 @@ func NewDb(cfg *Config) *gorm.DB {
 		log.Fatal(err)
 	}
 	log.Println("Connected to database:", cfg.Database)
+
+	db.Debug().AutoMigrate(&complaint.Complaint{})
+	db.Debug().AutoMigrate(&customer.Customer{})
+
+	log.Println("Database migrated")
 	return db
 }
 

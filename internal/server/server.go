@@ -1,18 +1,19 @@
 package server
 
 import (
+	"camarinb2096/form_example/internal/app/form"
 	"log"
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type Server struct {
 	router *gin.Engine
 }
 
-func NewServer() *Server {
-
+func NewServer(db *gorm.DB) *Server {
 	switch os.Getenv("GIN_MODE") {
 	case "release":
 		gin.SetMode(gin.ReleaseMode)
@@ -23,8 +24,21 @@ func NewServer() *Server {
 	}
 
 	router := gin.Default()
+	s := &Server{router: router}
+	s.routes(db)
 
-	return &Server{router: router}
+	return s
+}
+
+func (s *Server) routes(db *gorm.DB) {
+
+	formSrv := form.NewService(db)
+
+	endpoint := form.NewEndpoints(formSrv)
+
+	s.router.POST("/form", func(c *gin.Context) {
+		endpoint.Post(c)
+	})
 }
 
 func (s *Server) Start() {
