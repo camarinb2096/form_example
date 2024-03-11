@@ -1,8 +1,8 @@
 package main
 
 import (
-	"camarinb2096/form_example/internal/app/config/db"
-	"camarinb2096/form_example/internal/app/server"
+	"camarinb2096/form_example/internal/server"
+	"camarinb2096/form_example/pkg/infra/db"
 	"log"
 
 	"github.com/joho/godotenv"
@@ -20,6 +20,6 @@ func main() {
 
 	defer db.CloseDb(pgSqlConn)
 
-	server := server.NewServer()
+	server := server.NewServer(pgSqlConn)
 	server.Start()
 }
