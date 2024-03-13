@@ -19,7 +19,8 @@ type (
 		Name      string `json:"name"`
 		Email     string `json:"email"`
 		City      string `json:"city"`
-		Complaint string `json:"complaint"`
+		CompType  string `json:"type"`
+		Complaint string `json:"description"`
 	}
 )
 
