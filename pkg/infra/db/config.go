@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"gorm.io/driver/postgres"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
@@ -31,8 +31,8 @@ func NewConfig() *Config {
 }
 
 func NewDb(cfg *Config) *gorm.DB {
-	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.Database)
-	db, err := gorm.Open(postgres.Open(connStr), &gorm.Config{})
+	connStr := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.Database)
+	db, err := gorm.Open(mysql.Open(connStr), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
 	}

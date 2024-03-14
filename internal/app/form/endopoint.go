@@ -33,16 +33,18 @@ func NewEndpoints(s Services) Endpoints {
 func createForm(s Services) Controller {
 	return func(c *gin.Context) {
 		var form Form
-
 		json.NewDecoder(c.Request.Body).Decode(&form)
 
 		if form.Name == "" || form.Email == "" || form.City == "" || form.Complaint == "" {
-			utils.HandleError(c, http.StatusBadRequest, "Invalid form")
+			utils.HandleError(c, http.StatusInternalServerError, "Invalid form")
 			return
 		}
+		err := s.CreatePqr(form.Name, form.Email, form.City, form.Complaint)
+		if err != nil {
+			utils.HandleError(c, http.StatusInternalServerError, err.Error())
+			return
 
-		s.CreatePqr(form.Name, form.Email, form.City, form.Complaint)
-
+		}
 		utils.HandleSuccess(c, "Form submitted successfully", form)
 	}
 }

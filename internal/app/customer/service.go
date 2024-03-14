@@ -1,9 +1,14 @@
 package customer
 
-import "gorm.io/gorm"
+import (
+	"log"
+
+	"gorm.io/gorm"
+)
 
 type Services interface {
 	CreateCustomer(name, email, city string) (uint, error)
+	GetCustomerId(email string) (int, error)
 }
 
 type services struct {
@@ -31,4 +36,16 @@ func (s *services) CreateCustomer(name, email, city string) (uint, error) {
 	}
 
 	return customer.ID, nil
+}
+
+func (s *services) GetCustomerId(email string) (int, error) {
+	var customer Customer
+
+	log.Println("Consultando usuario por email...")
+
+	if err := s.db.Where("email = ?", email).First(&customer).Error; err != nil {
+		return 0, err
+	}
+
+	return int(customer.ID), nil
 }
