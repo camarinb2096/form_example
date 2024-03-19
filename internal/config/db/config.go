@@ -3,6 +3,7 @@ package db
 import (
 	"camarinb2096/form_example/internal/app/complaint"
 	"camarinb2096/form_example/internal/app/customer"
+	"camarinb2096/form_example/pkg/logger"
 	"fmt"
 	"log"
 	"os"
@@ -30,26 +31,28 @@ func NewConfig() *Config {
 	}
 }
 
-func NewDb(cfg *Config) *gorm.DB {
+func NewDb(cfg *Config, logger *logger.Logger) *gorm.DB {
+	logger.Info("Connecting to database...")
 	connStr := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.Database)
 	db, err := gorm.Open(mysql.Open(connStr), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("Connected to database:", cfg.Database)
+	logger.Info("Connected to database: %s ", cfg.Database)
 
+	logger.Info("Migrating database...")
 	db.Debug().AutoMigrate(&complaint.Complaint{})
 	db.Debug().AutoMigrate(&customer.Customer{})
 
-	log.Println("Database migrated")
+	logger.Info("Database migrated")
 	return db
 }
 
-func CloseDb(db *gorm.DB) error {
+func CloseDb(db *gorm.DB, logger *logger.Logger) error {
 	sqlDb, err := db.DB()
 	if err != nil {
 		return err
 	}
-	log.Println("Closing database connection")
+	logger.Info("Closing database connection...")
 	return sqlDb.Close()
 }

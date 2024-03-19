@@ -2,7 +2,7 @@ package server
 
 import (
 	"camarinb2096/form_example/internal/app/form"
-	"log"
+	"camarinb2096/form_example/pkg/logger"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -22,11 +22,9 @@ func NewServer(db *gorm.DB) *Server {
 	default:
 		gin.SetMode(gin.TestMode)
 	}
-
 	router := gin.Default()
 	s := &Server{router: router}
 	s.routes(db)
-
 	return s
 }
 
@@ -53,12 +51,20 @@ func (s *Server) routes(db *gorm.DB) {
 
 	s.router.Use(configCors())
 
-	s.router.POST("/form", func(c *gin.Context) {
-		endpoint.Post(c)
-	})
+	form := s.router.Group("/api/form")
+	{
+		form.Use(configCors())
+		form.POST("/", func(c *gin.Context) {
+			endpoint.Post(c)
+
+		})
+		form.PATCH("/:id", func(c *gin.Context) {
+			endpoint.Patch(c)
+		})
+	}
 }
 
-func (s *Server) Start() {
-	log.Println("Starting server on port 8080 on:", os.Getenv("GIN_MODE"))
+func (s *Server) Start(logger *logger.Logger) {
+	logger.Info("Starting http server on port: %s", os.Getenv("PORT"))
 	s.router.Run()
 }

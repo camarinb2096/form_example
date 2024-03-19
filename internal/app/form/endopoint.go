@@ -12,7 +12,8 @@ type (
 	Controller func(c *gin.Context)
 
 	Endpoints struct {
-		Post Controller
+		Post  Controller
+		Patch Controller
 	}
 
 	Form struct {
@@ -27,6 +28,9 @@ type (
 func NewEndpoints(s Services) Endpoints {
 	return Endpoints{
 		Post: createForm(s),
+		Patch: func(c *gin.Context) {
+			utils.HandleError(c, http.StatusNotImplemented, "Not implemented")
+		},
 	}
 }
 

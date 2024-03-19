@@ -7,7 +7,7 @@ import (
 )
 
 type Services interface {
-	CreateCustomer(name, email, city string) (uint, error)
+	CreateCustomer(name, email, city string) (int, error)
 	GetCustomerId(email string) (int, error)
 }
 
@@ -23,7 +23,7 @@ func NewCustomerService(db *gorm.DB) Services {
 
 //TODO: Add validation for email and city, add http responses for errors and success, add tests
 
-func (s *services) CreateCustomer(name, email, city string) (uint, error) {
+func (s *services) CreateCustomer(name, email, city string) (int, error) {
 
 	customer := Customer{
 		Name:  name,
@@ -35,7 +35,7 @@ func (s *services) CreateCustomer(name, email, city string) (uint, error) {
 		return 0, err
 	}
 
-	return customer.ID, nil
+	return int(customer.ID), nil
 }
 
 func (s *services) GetCustomerId(email string) (int, error) {
