@@ -22,7 +22,7 @@ type Logger struct {
 // NewLogger initializes a new Logger instance
 func NewLogger() *Logger {
 	return &Logger{
-		logger: log.New(os.Stdout, "Geofencing-Service ", log.LstdFlags),
+		logger: log.New(os.Stdout, "Form - API ", log.LstdFlags),
 	}
 }
 

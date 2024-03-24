@@ -11,4 +11,4 @@ services:
       - "5432:5432"
     volumes:
       - /home/camilo_marin/projects/db-data:/var/lib/postgresql/data
-      
+  
